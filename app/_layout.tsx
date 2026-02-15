@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   PanResponder,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -83,23 +84,29 @@ const App = () => {
         <Text style={styles.subtitle}>{t("appSubtitle")}</Text>
       </View>
 
-      <View style={styles.testsContainer}>
-        {tests.map((test) => (
-          <TouchableOpacity
-            key={test.id}
-            style={styles.testButton}
-            onPress={() => setCurrentTest(test.id)}
-          >
-            <Text style={styles.testIcon}>{test.icon}</Text>
-            <Text style={styles.testName}>{test.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.testsContainer}>
+          {tests.map((test) => (
+            <TouchableOpacity
+              key={test.id}
+              style={styles.testButton}
+              onPress={() => setCurrentTest(test.id)}
+            >
+              <Text style={styles.testIcon}>{test.icon}</Text>
+              <Text style={styles.testName}>{test.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <View style={styles.instructions}>
-        <Text style={styles.instructionTitle}>{t("howToUse")}</Text>
-        <Text style={styles.instructionText}>{t("instructions")}</Text>
-      </View>
+        <View style={styles.instructions}>
+          <Text style={styles.instructionTitle}>{t("howToUse")}</Text>
+          <Text style={styles.instructionText}>{t("instructions")}</Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 
@@ -435,8 +442,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   testsContainer: {
-    flex: 1,
     padding: 20,
+  },
+
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   testButton: {
     backgroundColor: "#FFFFFF",
