@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   PanResponder,
@@ -10,10 +11,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import "../i18n/i18n";
 
 const { width, height } = Dimensions.get("window");
 
 const App = () => {
+  const { t } = useTranslation();
   const [currentTest, setCurrentTest] = useState("menu");
   const [solidColor, setSolidColor] = useState("#FFFFFF");
   type Point = { x: number; y: number };
@@ -52,12 +55,12 @@ const App = () => {
 
   // Test modes
   const tests = [
-    { id: "solid", name: "Solid Colors", icon: "🎨" },
-    { id: "gradient", name: "Gradient Test", icon: "🌈" },
-    { id: "pixel", name: "Dead Pixel Detection", icon: "🔍" },
-    { id: "burnin", name: "Burn-in Test", icon: "🔥" },
-    { id: "grid", name: "Grid Pattern", icon: "⊞" },
-    { id: "touch", name: "Touch & Draw Test", icon: "✏️" },
+    { id: "solid", name: t("solidColors"), icon: "🎨" },
+    { id: "gradient", name: t("gradientTest"), icon: "🌈" },
+    { id: "pixel", name: t("deadPixelDetection"), icon: "🔍" },
+    { id: "burnin", name: t("burninTest"), icon: "🔥" },
+    { id: "grid", name: t("gridPattern"), icon: "⊞" },
+    { id: "touch", name: t("touchDrawTest"), icon: "✏️" },
   ];
 
   // Solid colors for testing
@@ -76,10 +79,8 @@ const App = () => {
     <SafeAreaView style={styles.menuContainer}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <Text style={styles.title}>iPhone Screen Tester</Text>
-        <Text style={styles.subtitle}>
-          Detect dead pixels, burn-in, and screen issues
-        </Text>
+        <Text style={styles.title}>{t("appTitle")}</Text>
+        <Text style={styles.subtitle}>{t("appSubtitle")}</Text>
       </View>
 
       <View style={styles.testsContainer}>
@@ -96,12 +97,8 @@ const App = () => {
       </View>
 
       <View style={styles.instructions}>
-        <Text style={styles.instructionTitle}>How to use:</Text>
-        <Text style={styles.instructionText}>
-          • Choose a test mode from above{"\n"}• View in a dark room for best
-          results{"\n"}• Look for stuck pixels, color inconsistencies{"\n"}• Tap
-          anywhere during test to return to menu
-        </Text>
+        <Text style={styles.instructionTitle}>{t("howToUse")}</Text>
+        <Text style={styles.instructionText}>{t("instructions")}</Text>
       </View>
     </SafeAreaView>
   );
@@ -135,7 +132,7 @@ const App = () => {
               },
             ]}
           >
-            Tap to exit
+            {t("tapToExit")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -153,10 +150,8 @@ const App = () => {
           colors={["#000000", "#FFFFFF"]}
           style={styles.fullScreen}
         >
-          <Text style={styles.gradientText}>
-            Look for banding or uneven transitions
-          </Text>
-          <Text style={styles.tapToExit}>Tap to exit</Text>
+          <Text style={styles.gradientText}>{t("gradientInstruction")}</Text>
+          <Text style={styles.tapToExit}>{t("tapToExit")}</Text>
         </LinearGradient>
       </TouchableOpacity>
     </View>
@@ -198,10 +193,11 @@ const App = () => {
             ))}
             <View style={styles.pixelOverlay}>
               <Text style={styles.pixelText}>
-                Dead Pixel Detection{"\n"}
-                Look for black or white dots that don&apos;t change
+                {t("deadPixelTitle")}
+                {"\n"}
+                {t("deadPixelInstruction")}
               </Text>
-              <Text style={styles.tapToExit}>Tap to exit</Text>
+              <Text style={styles.tapToExit}>{t("tapToExit")}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -218,12 +214,12 @@ const App = () => {
       >
         <View style={[styles.fullScreen, { backgroundColor: "#808080" }]}>
           <Text style={styles.burninText}>
-            Burn-in Test{"\n\n"}
-            Look for ghost images or persistent shadows{"\n"}
-            from status bar, navigation, or static elements
+            {t("burninTitle")}
+            {"\n\n"}
+            {t("burninInstruction")}
           </Text>
           <Text style={[styles.tapToExit, { color: "#FFFFFF" }]}>
-            Tap to exit
+            {t("tapToExit")}
           </Text>
         </View>
       </TouchableOpacity>
@@ -273,10 +269,11 @@ const App = () => {
             ))}
             <View style={styles.gridOverlay}>
               <Text style={styles.gridText}>
-                Grid Pattern Test{"\n"}
-                Check for alignment and screen uniformity
+                {t("gridTitle")}
+                {"\n"}
+                {t("gridInstruction")}
               </Text>
-              <Text style={styles.tapToExit}>Tap to exit</Text>
+              <Text style={styles.tapToExit}>{t("tapToExit")}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -371,21 +368,13 @@ const App = () => {
           {/* Instructions and controls */}
           <View style={styles.touchControls}>
             <View style={styles.touchInstructions}>
-              <Text style={styles.touchTitle}>Touch & Draw Test</Text>
-              <Text style={styles.touchSubtitle}>
-                Draw patterns on the screen to test touch responsiveness
-              </Text>
+              <Text style={styles.touchTitle}>{t("touchTitle")}</Text>
+              <Text style={styles.touchSubtitle}>{t("touchSubtitle")}</Text>
               <View style={styles.touchTips}>
-                <Text style={styles.tipText}>
-                  • Draw straight lines to check tracking accuracy
-                </Text>
-                <Text style={styles.tipText}>
-                  • Draw circles to test smooth response
-                </Text>
-                <Text style={styles.tipText}>• Test all corners and edges</Text>
-                <Text style={styles.tipText}>
-                  • Try fast and slow movements
-                </Text>
+                <Text style={styles.tipText}>{t("touchTip1")}</Text>
+                <Text style={styles.tipText}>{t("touchTip2")}</Text>
+                <Text style={styles.tipText}>{t("touchTip3")}</Text>
+                <Text style={styles.tipText}>{t("touchTip4")}</Text>
               </View>
             </View>
             <View style={styles.touchButtons}>
@@ -393,10 +382,10 @@ const App = () => {
                 style={styles.clearButton}
                 onPress={clearCanvas}
               >
-                <Text style={styles.buttonText}>Clear Canvas</Text>
+                <Text style={styles.buttonText}>{t("clearCanvas")}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exitButton} onPress={exitTest}>
-                <Text style={styles.buttonText}>Exit</Text>
+                <Text style={styles.buttonText}>{t("exit")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -453,7 +442,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 20,
-
     marginBottom: 15,
     flexDirection: "row",
     alignItems: "center",
