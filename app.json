@@ -2,7 +2,7 @@
   "expo": {
     "name": "ScreenDoctor",
     "slug": "screen-doctor-app",
-    "version": "1.0.2",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "screendoctorapp",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.screendoctor.screendocto",
+      "bundleIdentifier": "app.screendoctor.screendoctor",
       "buildNumber": "2",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
