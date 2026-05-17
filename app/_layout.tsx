@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Dimensions,
@@ -11,10 +11,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  AdEventType,
+  InterstitialAd,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../i18n/i18n";
 
 const { width, height } = Dimensions.get("window");
+
+// ─── AdMob Configuration ──────────────────────────────────────────────────────
+// Replace the string below with your real Interstitial Ad Unit ID from AdMob.
+// Your Ad Unit ID looks like: ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX
+// NOTE: This is NOT your Publisher ID — go to AdMob → Apps → Ad Units to find it.
+const AD_UNIT_ID = __DEV__
+  ? TestIds.INTERSTITIAL // Safe test ad during development
+  : "ca-app-pub-6336309514571148/4920783633"; // ← Replace with your real Ad Unit ID
+
+const interstitial = InterstitialAd.createForAdRequest(AD_UNIT_ID, {
+  requestNonPersonalizedAdsOnly: true, // Recommended for GDPR compliance
+});
+// ─────────────────────────────────────────────────────────────────────────────
 
 const App = () => {
   const { t } = useTranslation();
@@ -25,6 +43,54 @@ const App = () => {
   const [paths, setPaths] = useState<Point[][]>([]);
   const [currentPath, setCurrentPath] = useState<Point[]>([]);
   const currentPathRef = useRef<Point[]>([]);
+
+  // ─── AdMob: Load interstitial on mount, reload after close ─────────────────
+  const adLoaded = useRef(false);
+
+  useEffect(() => {
+    const unsubscribeLoaded = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        adLoaded.current = true;
+      },
+    );
+
+    const unsubscribeClosed = interstitial.addAdEventListener(
+      AdEventType.CLOSED,
+      () => {
+        adLoaded.current = false;
+        interstitial.load(); // Preload the next ad after the current one closes
+      },
+    );
+
+    const unsubscribeError = interstitial.addAdEventListener(
+      AdEventType.ERROR,
+      (error) => {
+        console.warn("AdMob Interstitial error:", error);
+        adLoaded.current = false;
+      },
+    );
+
+    interstitial.load(); // Load the first ad when the app mounts
+
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeClosed();
+      unsubscribeError();
+    };
+  }, []);
+
+  /**
+   * Call this instead of setCurrentTest("menu") everywhere in the app.
+   * It shows the interstitial (if loaded) before returning to the menu.
+   */
+  const goToMenu = () => {
+    if (adLoaded.current) {
+      interstitial.show();
+    }
+    setCurrentTest("menu");
+  };
+  // ─────────────────────────────────────────────────────────────────────────────
 
   const panResponder = useRef(
     PanResponder.create({
@@ -116,7 +182,7 @@ const App = () => {
       <View style={[styles.fullScreen, { backgroundColor: solidColor }]}>
         <TouchableOpacity
           style={styles.fullScreenTouchable}
-          onPress={() => setCurrentTest("menu")}
+          onPress={goToMenu} // ← was setCurrentTest("menu")
         >
           <View style={styles.colorSelector}>
             {solidColors.map((item) => (
@@ -151,7 +217,7 @@ const App = () => {
       <StatusBar hidden />
       <TouchableOpacity
         style={styles.fullScreenTouchable}
-        onPress={() => setCurrentTest("menu")}
+        onPress={goToMenu} // ← was setCurrentTest("menu")
       >
         <LinearGradient
           colors={["#000000", "#FFFFFF"]}
@@ -165,7 +231,6 @@ const App = () => {
   );
 
   const renderPixelTest = () => {
-    // Create a checkerboard pattern to detect dead pixels
     const gridSize = 10;
     const rows = Math.ceil(height / gridSize);
     const cols = Math.ceil(width / gridSize);
@@ -175,7 +240,7 @@ const App = () => {
         <StatusBar hidden />
         <TouchableOpacity
           style={styles.fullScreenTouchable}
-          onPress={() => setCurrentTest("menu")}
+          onPress={goToMenu} // ← was setCurrentTest("menu")
         >
           <View style={styles.fullScreen}>
             {Array.from({ length: rows }).map((_, rowIndex) => (
@@ -217,7 +282,7 @@ const App = () => {
       <StatusBar hidden />
       <TouchableOpacity
         style={styles.fullScreenTouchable}
-        onPress={() => setCurrentTest("menu")}
+        onPress={goToMenu} // ← was setCurrentTest("menu")
       >
         <View style={[styles.fullScreen, { backgroundColor: "#808080" }]}>
           <Text style={styles.burninText}>
@@ -243,10 +308,9 @@ const App = () => {
         <StatusBar hidden />
         <TouchableOpacity
           style={styles.fullScreenTouchable}
-          onPress={() => setCurrentTest("menu")}
+          onPress={goToMenu} // ← was setCurrentTest("menu")
         >
           <View style={[styles.fullScreen, { backgroundColor: "#FFFFFF" }]}>
-            {/* Horizontal lines */}
             {Array.from({ length: horizontalLines }).map((_, index) => (
               <View
                 key={`h-${index}`}
@@ -260,7 +324,6 @@ const App = () => {
                 ]}
               />
             ))}
-            {/* Vertical lines */}
             {Array.from({ length: verticalLines }).map((_, index) => (
               <View
                 key={`v-${index}`}
@@ -296,14 +359,13 @@ const App = () => {
 
     const exitTest = () => {
       clearCanvas();
-      setCurrentTest("menu");
+      goToMenu(); // ← was setCurrentTest("menu")
     };
 
     return (
       <View style={styles.fullScreenContainer}>
         <StatusBar hidden />
         <View style={[styles.fullScreen, { backgroundColor: "#FFFFFF" }]}>
-          {/* Draw all completed paths */}
           {paths.map((path, pathIndex) => (
             <View key={`path-${pathIndex}`} style={StyleSheet.absoluteFill}>
               {path.map((point, pointIndex) => {
@@ -317,7 +379,6 @@ const App = () => {
                   point.y - prevPoint.y,
                   point.x - prevPoint.x,
                 );
-
                 return (
                   <View
                     key={`line-${pointIndex}`}
@@ -336,7 +397,6 @@ const App = () => {
             </View>
           ))}
 
-          {/* Draw current path being drawn */}
           {currentPath.length > 0 && (
             <View style={StyleSheet.absoluteFill}>
               {currentPath.map((point, pointIndex) => {
@@ -350,7 +410,6 @@ const App = () => {
                   point.y - prevPoint.y,
                   point.x - prevPoint.x,
                 );
-
                 return (
                   <View
                     key={`current-line-${pointIndex}`}
@@ -369,10 +428,8 @@ const App = () => {
             </View>
           )}
 
-          {/* Touch-responsive area */}
           <View {...panResponder.panHandlers} style={StyleSheet.absoluteFill} />
 
-          {/* Instructions and controls */}
           <View style={styles.touchControls}>
             <View style={styles.touchInstructions}>
               <Text style={styles.touchTitle}>{t("touchTitle")}</Text>
@@ -401,7 +458,6 @@ const App = () => {
     );
   };
 
-  // Render appropriate test
   switch (currentTest) {
     case "solid":
       return renderSolidColorTest();
@@ -444,7 +500,6 @@ const styles = StyleSheet.create({
   testsContainer: {
     padding: 20,
   },
-
   scrollView: {
     flex: 1,
   },
