@@ -73,6 +73,30 @@ const SECTIONS: { label: string; tests: TestDef[] }[] = [
         desc: "Alignment lines",
         accent: ["#f87171", "#dc2626"],
       },
+      {
+        id: "flicker",
+        route: "/tests/flicker",
+        name: "Flicker Test",
+        icon: "🎞️",
+        desc: "PWM backlight check",
+        accent: ["#a5b4fc", "#4338ca"],
+      },
+      {
+        id: "notch",
+        route: "/tests/notch",
+        name: "Notch & Bezel Test",
+        icon: "🎯",
+        desc: "Cutout alignment check",
+        accent: ["#fda4af", "#be123c"],
+      },
+      {
+        id: "sunlight",
+        route: "/tests/sunlight",
+        name: "Sunlight Test",
+        icon: "☀️",
+        desc: "Outdoor readability check",
+        accent: ["#fde68a", "#d97706"],
+      },
     ],
   },
   {
@@ -101,6 +125,14 @@ const SECTIONS: { label: string; tests: TestDef[] }[] = [
         icon: "⚡",
         desc: "Tap latency check",
         accent: ["#facc15", "#d97706"],
+      },
+      {
+        id: "tap-game",
+        route: "/tests/tap-game",
+        name: "Tap the Dot",
+        icon: "🎮",
+        desc: "Reaction & coverage game",
+        accent: ["#4ade80", "#15803d"],
       },
     ],
   },
@@ -155,6 +187,12 @@ const MORE_LINKS = [
     icon: "📱",
     title: "Device Info",
     desc: "Model, battery, resolution & storage",
+  },
+  {
+    route: "/tips",
+    icon: "💡",
+    title: "Tips & Tricks",
+    desc: "Get more life out of your screen",
   },
 ];
 
