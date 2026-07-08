@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "screendoctorapp",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios"],
     "splash": {
       "image": "./assets/screen-doctor-icon.png",
       "resizeMode": "contain",
@@ -21,10 +22,6 @@
         "UIViewControllerBasedStatusBarAppearance": false
       }
     },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/screen-doctor-icon.png"
-    },
     "plugins": [
       [
         "expo-splash-screen",
@@ -33,6 +30,19 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "ScreenDoctor needs camera access to control your flashlight for the Flashlight test.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "ScreenDoctor needs microphone access for the Microphone test to record and play back audio."
         }
       ]
     ],
