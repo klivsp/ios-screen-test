@@ -163,14 +163,6 @@ const SECTIONS: { label: string; tests: TestDef[] }[] = [
         desc: "L/R channel check",
         accent: ["#f9a8d4", "#db2777"],
       },
-      {
-        id: "microphone",
-        route: "/tests/microphone",
-        name: "Microphone Test",
-        icon: "🎤",
-        desc: "Record & playback",
-        accent: ["#93c5fd", "#2563eb"],
-      },
     ],
   },
 ];
